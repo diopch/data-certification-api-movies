@@ -2,7 +2,6 @@
 from fastapi import FastAPI
 import pandas as pd
 from joblib import load
-import csv
 
 app = FastAPI()
 
@@ -37,13 +36,8 @@ def predict(original_title, title,release_date,duration_min,
         number_of_top_productions=number_of_top_productions,
         available_in_english=available_in_english 
         )
-    with open('mycsvfile.csv', 'w') as f:  # You will need 'wb' mode in Python 2.x
-        w = csv.DictWriter(f, fieldnames =dictionnary.keys())
-        w.writeheader()
-        w.writerow(dictionnary)
-            
-    X_predict = pd.read_csv('mycsvfile.csv')  #[list(dictionnary.values())]
+    
+    X_predict = pd.DataFrame(dictionnary)  
     model = load("model.joblib")
     popularity = model.predict(X_predict)
-    # return X_predict
     return {'popularity': popularity}
